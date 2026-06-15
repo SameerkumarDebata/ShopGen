@@ -382,10 +382,61 @@ const Checkout = () => {
                   </button>
                 )}
               </div>
-              {appliedCoupon && (
+              {appliedCoupon ? (
                 <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
                   ✓ Code applied! You saved ₹{discountAmount}.
                 </p>
+              ) : (
+                <div className="mt-3 space-y-2">
+                  <p className="text-[10px] font-bold text-slate-450 dark:text-slate-500 uppercase tracking-wider">Recommended Coupons:</p>
+                  <div className="grid grid-cols-1 gap-2">
+                    {[
+                      { code: 'WELCOME10', discount: '10% OFF', details: 'Min. spend ₹1,000', minVal: 1000 },
+                      { code: 'SAVE500', discount: 'Flat ₹500 OFF', details: 'Min. spend ₹3,000', minVal: 3000 },
+                      { code: 'BIGDEAL25', discount: '25% OFF', details: 'Min. spend ₹5,000', minVal: 5000 }
+                    ].map((c) => {
+                      const isDisabled = getCartTotal() < c.minVal;
+                      return (
+                        <div key={c.code} className={`flex items-center justify-between p-2.5 rounded-xl border text-xs ${
+                          isDisabled 
+                            ? 'border-slate-150 bg-slate-50/50 dark:border-slate-800/40 dark:bg-slate-900/10 opacity-60' 
+                            : 'border-teal-200 bg-teal-50/20 dark:border-teal-900/20 dark:bg-teal-950/10'
+                        }`}>
+                          <div>
+                            <span className="font-mono font-black text-slate-700 dark:text-slate-205 tracking-wider bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border dark:border-slate-700 mr-2">{c.code}</span>
+                            <span className="font-bold text-teal-650 dark:text-teal-400">{c.discount}</span>
+                            <span className="text-[10px] text-slate-450 dark:text-slate-500 block mt-0.5">{c.details}</span>
+                          </div>
+                          <button
+                            type="button"
+                            disabled={isDisabled}
+                            onClick={async () => {
+                              try {
+                                const subtotal = getCartTotal();
+                                const { data } = await API.post('/coupons/validate', { code: c.code, subtotal });
+                                if (data.success) {
+                                  setAppliedCoupon(data);
+                                  setDiscountAmount(data.discountAmount);
+                                  setCouponCode(c.code);
+                                  toast.success(`Coupon ${data.code} applied successfully!`);
+                                }
+                              } catch (err) {
+                                toast.error(err.response?.data?.message || 'Failed to apply coupon.');
+                              }
+                            }}
+                            className={`px-3 py-1 rounded-lg font-bold text-[10px] transition-all cursor-pointer ${
+                              isDisabled 
+                                ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed border border-slate-200/50 dark:border-slate-700/50' 
+                                : 'bg-teal-600 hover:bg-teal-700 text-white shadow-sm'
+                            }`}
+                          >
+                            Apply
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
             </div>
 

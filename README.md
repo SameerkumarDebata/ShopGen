@@ -68,6 +68,7 @@ ShopGen/
     EMAIL_USER=your_email@gmail.com
     EMAIL_PASS=your_email_app_password
     ```
+    it's written inside .env.example
 4. Seed mock data into the database:
     ```bash
     npm run seed
@@ -94,8 +95,4 @@ ShopGen/
 
 ---
 
-## 🌐 Deployment (Vercel & Render)
 
-For detailed deployment instructions, checkout the split deployment method:
-*   **Backend:** Hosted on **Render** (Root directory: `Backend`, Build command: `npm install`, Start command: `npm start`).
-*   **Frontend:** Hosted on **Vercel** (Root directory: `Frontend`, Build command: `npm run build`, Output directory: `dist`, Environment Variable: `VITE_API_URL` pointing to your Render Backend URL).

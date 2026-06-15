@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useCart } from '../../context/CartContext.jsx';
+import { useWishlist } from '../../context/WishlistContext.jsx';
 
 const Navbar = () => {
   const { user, logout, isAdmin, isLoggedIn } = useAuth();
-  const { cartCount } = useCart();
+  const { cartCount, setIsCartOpen } = useCart();
+  const { wishlistItems } = useWishlist();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [catMenuOpen, setCatMenuOpen] = useState(false);
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('theme');
     if (saved) return saved;
@@ -75,12 +78,51 @@ const Navbar = () => {
             >
               Home
             </Link>
+
+            {/* Categories Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setCatMenuOpen(true)}
+              onMouseLeave={() => setCatMenuOpen(false)}
+            >
+              <button
+                className="flex items-center gap-1 text-sm font-medium text-slate-605 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors py-2 cursor-pointer focus:outline-none"
+              >
+                Categories
+                <svg className={`w-3.5 h-3.5 transition-transform duration-205 ${catMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {catMenuOpen && (
+                <div className="absolute left-0 mt-0 w-48 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl shadow-xl py-2.5 z-50 animate-in fade-in slide-in-from-top-1 duration-200">
+                  {['Electronics', 'Wearables', 'Fashion', 'Computers'].map((cat) => (
+                    <Link
+                      key={cat}
+                      to={`/products?category=${cat}`}
+                      onClick={() => setCatMenuOpen(false)}
+                      className="block px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-205 hover:bg-teal-50 dark:hover:bg-slate-700/60 hover:text-teal-650 dark:hover:text-teal-400 transition-colors"
+                    >
+                      {cat}
+                    </Link>
+                  ))}
+                  <div className="border-t border-slate-100 dark:border-slate-705 my-1" />
+                  <Link
+                    to="/products"
+                    onClick={() => setCatMenuOpen(false)}
+                    className="block px-4 py-2 text-xs font-bold text-teal-650 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/10 transition-colors"
+                  >
+                    View All Products &rarr;
+                  </Link>
+                </div>
+              )}
+            </div>
+
             <Link
               to="/products"
               className={`text-sm font-medium transition-colors ${
                 isActive('/products') 
                   ? 'text-teal-600 dark:text-teal-400' 
-                  : 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400'
+                  : 'text-slate-605 dark:text-slate-300 hover:text-teal-650 dark:hover:text-teal-400'
               }`}
             >
               Products
@@ -111,17 +153,37 @@ const Navbar = () => {
 
           {/* Desktop Right Actions */}
           <div className="hidden md:flex items-center gap-4">
-            {/* Cart Link */}
-            <Link to="/cart" className="relative p-2 text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            {/* Wishlist Link */}
+            <Link
+              to="/wishlist"
+              className="relative p-2 text-slate-600 dark:text-slate-350 hover:text-teal-650 dark:hover:text-teal-400 transition-colors cursor-pointer"
+              title="View Wishlist"
+            >
+              <svg className="w-5.5 h-5.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
-              {cartCount > 0 && (
-                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-teal-500 rounded-full transform translate-x-1/2 -translate-y-1/2 shadow-sm">
-                  {cartCount}
+              {wishlistItems.length > 0 && (
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[9px] font-black leading-none text-white bg-rose-500 rounded-full transform translate-x-1/2 -translate-y-1/2 shadow-sm">
+                  {wishlistItems.length}
                 </span>
               )}
             </Link>
+
+            {/* Cart Drawer Trigger */}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative p-2 text-slate-605 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors cursor-pointer focus:outline-none"
+              title="Open Shopping Cart"
+            >
+              <svg className="w-5.5 h-5.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              {cartCount > 0 && (
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[9px] font-black leading-none text-white bg-teal-500 rounded-full transform translate-x-1/2 -translate-y-1/2 shadow-sm">
+                  {cartCount}
+                </span>
+              )}
+            </button>
 
             {/* Theme Toggle Button */}
             <button
@@ -192,7 +254,11 @@ const Navbar = () => {
               )}
             </button>
 
-            <Link to="/cart" className="relative p-2 text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+            {/* Mobile Cart Toggle */}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative p-2 text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors cursor-pointer focus:outline-none"
+            >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
@@ -201,7 +267,7 @@ const Navbar = () => {
                   {cartCount}
                 </span>
               )}
-            </Link>
+            </button>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -242,6 +308,15 @@ const Navbar = () => {
               }`}
             >
               Products
+            </Link>
+            <Link
+              to="/wishlist"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`block px-3 py-2 rounded-lg text-base font-medium ${
+                isActive('/wishlist') ? 'bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' : 'text-slate-600 dark:text-slate-300'
+              }`}
+            >
+              Wishlist ({wishlistItems.length})
             </Link>
 
             {isLoggedIn && !isAdmin && (

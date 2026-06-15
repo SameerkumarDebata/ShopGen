@@ -4,6 +4,7 @@ import Footer from './components/common/Footer.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
 import AdminRoute from './routes/AdminRoute.jsx';
 import AdminLayout from './components/admin/AdminLayout.jsx';
+import CartDrawer from './components/common/CartDrawer.jsx';
 
 // Public Pages
 import Home from './pages/public/Home.jsx';
@@ -11,11 +12,13 @@ import Products from './pages/public/Products.jsx';
 import ProductDetail from './pages/public/ProductDetail.jsx';
 import Login from './pages/public/Login.jsx';
 import Register from './pages/public/Register.jsx';
+import Offers from './pages/public/Offers.jsx';
 
 // User Pages
 import Cart from './pages/user/Cart.jsx';
 import Checkout from './pages/user/Checkout.jsx';
 import MyOrders from './pages/user/MyOrders.jsx';
+import Wishlist from './pages/user/Wishlist.jsx';
 
 // Admin Pages
 import Dashboard from './pages/admin/Dashboard.jsx';
@@ -35,6 +38,8 @@ const App = () => {
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/offers" element={<Offers />} />
 
           {/* Protected User */}
           <Route element={<ProtectedRoute />}>
@@ -55,6 +60,7 @@ const App = () => {
         </Routes>
       </main>
       <Footer />
+      <CartDrawer />
     </div>
   );
 };

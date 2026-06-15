@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getProductByIdAPI, createProductReviewAPI } from '../../api/productAPI.js';
 import { useCart } from '../../context/CartContext.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useWishlist } from '../../context/WishlistContext.jsx';
 import { formatPrice } from '../../utils/helpers.js';
 import toast from 'react-hot-toast';
 
@@ -10,6 +11,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
   const { isLoggedIn } = useAuth();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -232,16 +234,68 @@ const ProductDetail = () => {
             <button
               onClick={handleAddToCart}
               disabled={product.stock === 0}
-              className="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 dark:disabled:bg-slate-600 text-white font-bold py-3 rounded-xl transition-colors shadow-md"
+              className="flex-3 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 dark:disabled:bg-slate-650 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-md cursor-pointer flex items-center justify-center gap-1.5 active:scale-95"
             >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
               {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
             </button>
-            <Link
-              to="/cart"
-              className="flex-1 border-2 border-teal-600 text-teal-600 dark:text-teal-400 font-bold py-3 rounded-xl transition-colors text-center hover:bg-teal-50 dark:hover:bg-teal-900/20"
+            <button
+              onClick={() => {
+                toggleWishlist(product);
+                if (isInWishlist(product._id)) {
+                  toast.success('Removed from wishlist');
+                } else {
+                  toast.success('Added to wishlist!');
+                }
+              }}
+              className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all border flex items-center justify-center cursor-pointer active:scale-95 ${
+                isInWishlist(product._id)
+                  ? 'border-rose-500 bg-rose-50 dark:bg-rose-950/20 text-rose-500'
+                  : 'border-slate-300 dark:border-slate-700 text-slate-500 hover:border-rose-450 hover:text-rose-500 dark:text-slate-400'
+              }`}
+              title={isInWishlist(product._id) ? "Remove from Wishlist" : "Add to Wishlist"}
             >
-              View Cart
-            </Link>
+              <svg className={`w-5 h-5 ${isInWishlist(product._id) ? 'fill-current text-rose-500' : ''}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Available Offers / Promos card */}
+          <div className="bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50 rounded-2xl p-4.5 mt-8 space-y-3 shadow-xs">
+            <h3 className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-teal-650 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+              </svg>
+              Available Offers & Promotions
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                { code: 'WELCOME10', discount: '10% OFF', details: 'Min. spend ₹1,000' },
+                { code: 'SAVE500', discount: 'Flat ₹500 OFF', details: 'Min. spend ₹3,000' },
+                { code: 'BIGDEAL25', discount: '25% OFF', details: 'Min. spend ₹5,000' }
+              ].map((off) => (
+                <div key={off.code} className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/60 p-3 rounded-xl flex flex-col justify-between gap-2 text-xs">
+                  <div>
+                    <div className="font-mono font-black text-slate-700 dark:text-slate-305 tracking-wide bg-slate-50 dark:bg-slate-900 px-1.5 py-0.5 rounded border dark:border-slate-800 inline-block">{off.code}</div>
+                    <div className="font-extrabold text-teal-650 dark:text-teal-450 mt-1">{off.discount}</div>
+                  </div>
+                  <div className="text-[9px] text-slate-400 leading-tight">{off.details}</div>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigator.clipboard.writeText(off.code);
+                      toast.success(`Code ${off.code} copied!`);
+                    }}
+                    className="text-[9px] font-bold text-slate-500 hover:text-teal-605 text-left cursor-pointer focus:outline-none"
+                  >
+                    Copy Code
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

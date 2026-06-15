@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { getProductsAPI } from '../../api/productAPI.js';
 import ProductCard from "../../components/common/ProductCard.jsx";
 import { SkeletonGrid } from "../../components/common/SkeletonCard.jsx";
@@ -118,8 +118,44 @@ const Home = () => {
   return (
     <div className="space-y-12 pb-20 bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
       
+      {/* Premium Hero Banner */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-white py-16 sm:py-24 px-6 sm:px-12 text-center rounded-b-[40px] shadow-lg border-b border-slate-800">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0d948810_1px,transparent_1px),linear-gradient(to_bottom,#0d948810_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
+
+        <div className="relative max-w-3xl mx-auto space-y-6">
+          <span className="inline-block bg-teal-500/15 border border-teal-550/30 text-teal-400 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full backdrop-blur-xs select-none">
+            🌟 Premium E-Commerce 2026
+          </span>
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight bg-gradient-to-r from-white via-slate-100 to-teal-300 bg-clip-text text-transparent">
+            Your Ultimate Smart Shopping Destination
+          </h1>
+          <p className="text-xs sm:text-base text-slate-350 max-w-xl mx-auto font-medium leading-relaxed">
+            Discover curated electronics, wearable tech, lifestyle statements, and performance computers. Safe orders, secure checkout, and instant dispatch.
+          </p>
+          <div className="flex justify-center gap-3 pt-2">
+            <button
+              onClick={() => {
+                const element = document.getElementById('homepage-products-grid');
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="bg-teal-605 hover:bg-teal-700 text-white font-extrabold text-xs px-6 py-3.5 rounded-2xl shadow-lg active:scale-95 transition-all cursor-pointer hover:shadow-teal-500/10"
+            >
+              Shop Collection &rarr;
+            </button>
+            <Link
+              to="/offers"
+              className="bg-white/10 hover:bg-white/15 border border-white/10 text-white font-extrabold text-xs px-6 py-3.5 rounded-2xl backdrop-blur-xs active:scale-95 transition-all text-center flex items-center"
+            >
+              View Promo Offers
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* 1. Circle Category Row (Flipkart-Style) */}
-      <section className="bg-white dark:bg-slate-800 border-b border-slate-200/60 dark:border-slate-700/60 shadow-sm py-4">
+      <section className="bg-white dark:bg-slate-850 border-y border-slate-200/50 dark:border-slate-800/80 shadow-xs py-4">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-center items-center gap-6 sm:gap-12 overflow-x-auto scrollbar-none py-1">
             {CATEGORIES_DATA.map((cat) => (
@@ -240,7 +276,61 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 3. Dynamic Products Grid */}
+      {/* 3. Premium Trust / Trust Features Bar */}
+      <section className="max-w-7xl mx-auto px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 bg-white dark:bg-slate-800/80 border border-slate-150 dark:border-slate-800 rounded-3xl p-6 shadow-xs backdrop-blur-md">
+          {/* Tile 1 */}
+          <div className="flex items-center gap-4 p-2">
+            <div className="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-950/40 text-teal-605 dark:text-teal-400 flex items-center justify-center flex-shrink-0">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="text-xs font-black text-slate-800 dark:text-slate-205 uppercase tracking-wider">Fast Free Delivery</h4>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">On order amounts above ₹1,000</p>
+            </div>
+          </div>
+          {/* Tile 2 */}
+          <div className="flex items-center gap-4 p-2">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="text-xs font-black text-slate-800 dark:text-slate-205 uppercase tracking-wider">Secure Checkout</h4>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Razorpay secure card protection</p>
+            </div>
+          </div>
+          {/* Tile 3 */}
+          <div className="flex items-center gap-4 p-2">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="text-xs font-black text-slate-800 dark:text-slate-205 uppercase tracking-wider">Easy Refunds</h4>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">14-day hassle free return policy</p>
+            </div>
+          </div>
+          {/* Tile 4 */}
+          <div className="flex items-center gap-4 p-2">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-605 dark:text-rose-455 flex items-center justify-center flex-shrink-0">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="text-xs font-black text-slate-800 dark:text-slate-205 uppercase tracking-wider">Dedicated Support</h4>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">24/7 client care helpdesk lines</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Dynamic Products Grid */}
       <section id="homepage-products-grid" className="max-w-7xl mx-auto px-4 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4 border-slate-200 dark:border-slate-700/60">
           <div>

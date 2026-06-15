@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getProductsAPI } from '../../api/productAPI.js';
 import ProductCard from '../../components/common/ProductCard.jsx';
 import { SkeletonGrid } from '../../components/common/SkeletonCard.jsx';
@@ -9,8 +10,14 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('All');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category') || 'All';
+  const [category, setCategory] = useState(categoryParam);
   const [sort, setSort] = useState('default');
+
+  useEffect(() => {
+    setCategory(categoryParam);
+  }, [categoryParam]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -72,7 +79,15 @@ const Products = () => {
         {CATEGORIES.map((cat) => (
           <button
             key={cat}
-            onClick={() => setCategory(cat)}
+            onClick={() => {
+              setCategory(cat);
+              if (cat === 'All') {
+                searchParams.delete('category');
+              } else {
+                searchParams.set('category', cat);
+              }
+              setSearchParams(searchParams);
+            }}
             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
               category === cat
                 ? 'bg-teal-600 text-white shadow-sm'
