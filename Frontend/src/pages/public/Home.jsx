@@ -52,8 +52,33 @@ const Home = () => {
   const [sortBy, setSortBy] = useState('default');
   const [visibleLimit, setVisibleLimit] = useState(8);
   const [priceFilter, setPriceFilter] = useState('all');
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
   
   const navigate = useNavigate();
+
+  const minSwipeDistance = 50;
+
+  const handleTouchStart = (e) => {
+    setTouchEndX(null);
+    setTouchStartX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX || !touchEndX) return;
+    const distance = touchStartX - touchEndX;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      setCurrentSlide((prev) => (prev + 1) % PROMO_SLIDES.length);
+    } else if (isRightSwipe) {
+      setCurrentSlide((prev) => (prev - 1 + PROMO_SLIDES.length) % PROMO_SLIDES.length);
+    }
+  };
 
   // Load products
   useEffect(() => {
@@ -185,7 +210,10 @@ const Home = () => {
         <div 
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className="relative group h-64 sm:h-96 w-full rounded-3xl overflow-hidden shadow-lg border border-slate-200/40 dark:border-slate-700/40 bg-slate-950"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          className="relative group h-[340px] sm:h-96 w-full rounded-3xl overflow-hidden shadow-lg border border-slate-200/40 dark:border-slate-700/40 bg-slate-950"
         >
           {/* Sliding Slides Container */}
           <div 
@@ -198,9 +226,9 @@ const Home = () => {
                 className="w-full h-full flex-shrink-0 relative flex items-center"
               >
                 <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${slide.image})` }} />
-                <div className={`absolute inset-0 bg-gradient-to-r ${slide.color}`} />
+                <div className={`absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r ${slide.color}`} />
                 
-                <div className="relative max-w-xl mx-auto md:mx-0 px-6 sm:px-12 text-white flex flex-col justify-center h-full z-20 space-y-4 text-center md:text-left">
+                <div className="relative max-w-xl mx-auto md:mx-0 px-6 sm:px-12 text-white flex flex-col justify-center h-full z-20 space-y-3.5 sm:space-y-4 text-center md:text-left">
                   {slide.badge && (
                     <span 
                       className={`self-center md:self-start bg-teal-500 text-white font-black text-[10px] tracking-wider uppercase px-3 py-1 rounded-full shadow-sm transition-all duration-700 transform ${
@@ -211,7 +239,7 @@ const Home = () => {
                     </span>
                   )}
                   <h2 
-                    className={`text-2xl sm:text-4xl font-extrabold leading-tight tracking-tight drop-shadow-md transition-all duration-700 transform ${
+                    className={`text-xl sm:text-3xl md:text-4xl font-extrabold leading-tight tracking-tight drop-shadow-md transition-all duration-700 transform ${
                       idx === currentSlide ? 'translate-y-0 opacity-100 delay-300' : 'translate-y-4 opacity-0'
                     }`}
                   >
@@ -240,7 +268,7 @@ const Home = () => {
               </div>
             ))}
           </div>
-
+ 
           {/* Dots Indicators (Glassmorphic tray with glowing active pill) */}
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2.5 bg-slate-900/35 backdrop-blur-md px-3.5 py-2 rounded-full border border-white/10 shadow-md">
             {PROMO_SLIDES.map((_, idx) => (
@@ -255,11 +283,11 @@ const Home = () => {
               />
             ))}
           </div>
-
+ 
           {/* Prev/Next arrows (Glassmorphic round buttons, visible on hover/mobile) */}
           <button
             onClick={() => setCurrentSlide((currentSlide - 1 + PROMO_SLIDES.length) % PROMO_SLIDES.length)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 hover:border-white/25 backdrop-blur-md text-white flex items-center justify-center z-20 transition-all duration-300 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-105 active:scale-95 shadow-lg"
+            className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 hover:border-white/25 backdrop-blur-md text-white items-center justify-center z-20 transition-all duration-300 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-105 active:scale-95 shadow-lg"
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
@@ -267,7 +295,7 @@ const Home = () => {
           </button>
           <button
             onClick={() => setCurrentSlide((currentSlide + 1) % PROMO_SLIDES.length)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 hover:border-white/25 backdrop-blur-md text-white flex items-center justify-center z-20 transition-all duration-300 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-105 active:scale-95 shadow-lg"
+            className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 hover:border-white/25 backdrop-blur-md text-white items-center justify-center z-20 transition-all duration-300 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-105 active:scale-95 shadow-lg"
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
