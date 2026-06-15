@@ -103,31 +103,33 @@ const ManageProducts = () => {
 
       {/* Database Inventory Table Layout */}
       <div className="lg:col-span-2 bg-white border rounded-2xl overflow-hidden shadow-sm">
-        <table className="w-full text-left text-sm text-slate-600">
-          <thead className="bg-slate-50 text-slate-700 border-b font-medium">
-            <tr>
-              <th className="p-4">Item details</th>
-              <th className="p-4">Category</th>
-              <th className="p-4">Pricing</th>
-              <th className="p-4">Stock</th>
-              <th className="p-4 text-right">Controls</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {products.map((product) => (
-              <tr key={product._id} className="hover:bg-slate-50/50">
-                <td className="p-4 font-medium text-slate-900">{product.name}</td>
-                <td className="p-4">{product.category}</td>
-                <td className="p-4">₹{product.price}</td>
-                <td className="p-4">{product.stock} units</td>
-                <td className="p-4 text-right space-x-2">
-                  <button onClick={() => handleEditClick(product)} className="text-teal-600 hover:underline">Edit</button>
-                  <button onClick={() => handleDelete(product._id)} className="text-red-500 hover:underline">Delete</button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-slate-600">
+            <thead className="bg-slate-50 text-slate-700 border-b font-medium">
+              <tr>
+                <th className="p-4">Item details</th>
+                <th className="p-4">Category</th>
+                <th className="p-4">Pricing</th>
+                <th className="p-4">Stock</th>
+                <th className="p-4 text-right">Controls</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y">
+              {products.map((product) => (
+                <tr key={product._id} className="hover:bg-slate-50/50">
+                  <td className="p-4 font-medium text-slate-900">{product.name}</td>
+                  <td className="p-4">{product.category}</td>
+                  <td className="p-4">₹{product.price}</td>
+                  <td className="p-4">{product.stock} units</td>
+                  <td className="p-4 text-right space-x-2">
+                    <button onClick={() => handleEditClick(product)} className="text-teal-600 hover:underline">Edit</button>
+                    <button onClick={() => handleDelete(product._id)} className="text-red-500 hover:underline">Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -309,6 +309,25 @@ const Navbar = () => {
             >
               Products
             </Link>
+
+            {/* Mobile Categories grid links */}
+            <div className="space-y-1">
+              <span className="block px-3 pt-2 pb-1 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                Browse Departments
+              </span>
+              <div className="pl-3 grid grid-cols-2 gap-2 pb-2">
+                {['Electronics', 'Wearables', 'Fashion', 'Computers'].map((cat) => (
+                  <Link
+                    key={cat}
+                    to={`/products?category=${cat}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-3 py-2 rounded-xl text-xs font-bold text-slate-750 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/60 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+                  >
+                    {cat}
+                  </Link>
+                ))}
+              </div>
+            </div>
             <Link
               to="/wishlist"
               onClick={() => setMobileMenuOpen(false)}
